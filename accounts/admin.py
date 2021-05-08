@@ -11,7 +11,7 @@ class AccountAdmin(UserAdmin):
     readonly_fields = ('last_login', 'date_joined')
     ordering = ('-date_joined',)
     filter_horizontal = ()
-    list_filter = ()
+    list_filter = ('email',)
     fieldsets = ()  # fieldsets is use to make password read onnly
 
 
