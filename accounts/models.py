@@ -64,5 +64,5 @@ class Account(AbstractBaseUser):
     def has_perm(self, perm, obj=None):  # perm mean spermission
         return self.is_admin  # Admin has permission to do everythng
 
-    def has_module_perms(self, add_label):
+    def has_module_perms(self, app_label):
         return True
