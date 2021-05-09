@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product
 from category.models import Category
+from carts.views import _cart_id
+from carts.models import CartItem
+from django.http import HttpResponse
 # Create your views here.
 
 
@@ -30,10 +33,16 @@ def product_detail(request, category_slug, product_slug):
         # first we need to get access the category,category__slug is from model category and slug is from product  eg:http://127.0.0.1:8000/store/t-shirt/great-tshirt/
         single_product = Product.objects.get(
             category__slug=category_slug, slug=product_slug)
+        # It is a foreign key so we will acces cart attribute(column)from CartItem and inside it i want to acces cart_id from Cart
+        in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(
+            request), product=single_product).exists()
+        # if product  exists in cart then it will return true or else false
+        # return HttpResponse('in_cart')
     except Exception as e:
         raise e
 
     data = {
-        'single_product': single_product
+        'single_product': single_product,
+        'in_cart': in_cart,
     }
     return render(request, 'store/product_detail.html', data)

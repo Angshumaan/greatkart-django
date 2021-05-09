@@ -48,8 +48,11 @@ def add_cart(request, product_id):
 
 def remove_cart(request, product_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))
+    print('Cart id :', cart)
     product = get_object_or_404(Product, id=product_id)
+    print('Product :', product)
     cart_item = CartItem.objects.get(product=product, cart=cart)
+    print('cart_item:', cart_item)
     if cart_item.quantity > 1:
         cart_item.quantity -= 1
         cart_item.save()
