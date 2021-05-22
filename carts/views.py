@@ -17,25 +17,26 @@ def _cart_id(request):
 
 
 def add_cart(request, product_id):
-    product = Product.objects.get(id=product_id)
+    '''gettign the product here'''
+    product = Product.objects.get(
+        id=product_id)  # checking product_id that the user is giving with the database id
+    '''product variation here'''
     product_variation = []
     if request.method == 'POST':
         # Just like dictionary if we wnat key adn value
         for item in request.POST:
             key = item
             value = request.POST[key]
-            print(key, value)
             try:
-                variation = Variation.objects.get(product=product,
-                                                  variation_category__iexact=key, variation_value=value)
+                variation = Variation.objects.get(
+                    product=product, variation_category__iexact=key, variation_value__iexact=value)
+                product_variation.append(variation)
                 # now we can store this to cartItem go to cart models and make a field and store in cartItem
                 product_variation.append(variation)
             except:
                 pass
-
-    # checking product_id that the user is giving with the database id
-    product = Product.objects.get(id=product_id)  # get the product
     try:
+        '''Cart id here'''
         # checking cart_id that with the _cart_id function that matches in datbase
         # get the cart using the cart_id present in the session
         cart = Cart.objects.get(cart_id=_cart_id(request))
@@ -46,7 +47,12 @@ def add_cart(request, product_id):
         cart.save()
 
     try:
+        '''Cart item here..bring all the product,cart and variation here so thhat it becomes packed in one place'''
         cart_item = CartItem.objects.get(product=product, cart=cart)
+        if len(product_variation) > 0:
+            cart_item.variations.clear()
+            for item in product_variation:
+                cart_item.variations.add(item)
         cart_item.quantity += 1
         cart_item.save()
     except CartItem.DoesNotExist:
@@ -55,6 +61,10 @@ def add_cart(request, product_id):
             quantity=1,
             cart=cart,
         )
+        if len(product_variation) > 0:
+            cart_item.variations.clear()
+            for item in product_variation:
+                cart_item.variations.add(item)
         cart_item.save()
 
     # return HttpResponse(cart_item.product)
