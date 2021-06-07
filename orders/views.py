@@ -30,8 +30,9 @@ def payments(request):
 
     # move the cart items to order product table(model)
     cart_items = CartItem.objects.filter(user=request.user)
-
+    print("cart_items", cart_items)
     for item in cart_items:
+        print("item.............", item.id)
         orderproduct = OrderProduct()
         orderproduct.order_id = order.id
         orderproduct.payment = payment
@@ -40,6 +41,16 @@ def payments(request):
         orderproduct.quantity = item.quantity
         orderproduct.product_price = item.product.price
         orderproduct.ordered = True
+        orderproduct.save()
+
+        cart_item = CartItem.objects.get(id=item.id)
+        print('-----------')
+        print('cart iTem', cart_item)
+        product_variation = cart_item.variations.all()
+        print('variation', product_variation)
+        orderproduct = OrderProduct.objects.get(id=orderproduct.id)
+        print('order Product:', orderproduct)
+        orderproduct.variations.set(product_variation)
         orderproduct.save()
 
     # reduce the quantity of sold products
