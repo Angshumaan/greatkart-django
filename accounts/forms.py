@@ -1,10 +1,10 @@
 from django import forms
 
-from . models import Account
+from . models import Account, UserProfile
 
 
 class RegistrationForm(forms.ModelForm):
-    '''use like this to include custom fields again that is not included in models'''
+    '''use like this to include custom fields again that is not included in models or if you want to edit models'''
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder': "password", 'class': 'form-control'
     }))
@@ -44,3 +44,29 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Password doesnot match!"
             )
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ('first_name', 'last_name', 'phone_number')
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class UserProfileForm(forms.ModelForm):
+    profile_picture = forms.ImageField(required=False, error_messages={
+        'invalid': {"image files only"}}, widget=forms.FileInput)
+
+    class Meta:
+        model = UserProfile
+        fields = ('address_line_1', 'address_line_2', 'city',
+                  'state', 'country', 'profile_picture')
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
