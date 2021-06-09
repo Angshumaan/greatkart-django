@@ -18,10 +18,11 @@ def store(request, category_slug=None):
 
     # This will bring products based on category like  http://127.0.0.1:8000/store/t-shirt/
     if category_slug != None:
-        categories = get_object_or_404(Category, slug=category_slug)
+        categories = get_object_or_404(
+            Category, slug=category_slug)
         # This is will bring us all products based on the upper defined categories
         products = Product.objects.filter(
-            category=categories, is_available=True)
+            category=categories, is_available=True).order_by('id')
         # this code is for 6 products paginator
         paginator = Paginator(products, 1)
         # 127.0.0.1:8000/store/?page = 2 we want to capture the page keyword after question mark by user requesting as get
@@ -59,11 +60,15 @@ def product_detail(request, category_slug, product_slug):
         # return HttpResponse('in_cart')
     except Exception as e:
         raise e
-    try:
-        # if it is true we will show him submit review button
-        orderproduct = OrderProduct.objects.filter(
-            user=request.user, product_id=single_product.id).exists()
-    except OrderProduct.DoesNotExist:
+
+    if request.user.is_authenticated:
+        try:
+            # if it is true we will show him submit review button
+            orderproduct = OrderProduct.objects.filter(
+                user=request.user, product_id=single_product.id).exists()
+        except OrderProduct.DoesNotExist:
+            orderproduct = None
+    else:
         orderproduct = None
 
     # get the review
@@ -75,6 +80,7 @@ def product_detail(request, category_slug, product_slug):
         'single_product': single_product,
         'in_cart': in_cart,
         'order_product': orderproduct,
+        'reviews': reviews,
     }
     return render(request, 'store/product_detail.html', data)
 
