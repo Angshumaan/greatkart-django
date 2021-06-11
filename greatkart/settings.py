@@ -153,13 +153,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # static will create after we hit  python manage.py collectstatic inside base direcctory
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR /'static'
 STATICFILES_DIRS = [
     'greatkart/static',  # Where we keep static files inside project folder greatkart
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR /'media'
 
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
